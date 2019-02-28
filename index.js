@@ -39,50 +39,107 @@ console.log(`${directoryPath[0]} hola`);
 
 ///////////////////////
 
+
+function validateFileOrDirectory(pathSearched){
+  // console.log (pathSearched+" en validateFileOrDirectory");
+ pathSearched2=pathSearched;
+ // console.log(pathSearched2+" revisando pathsearched 2");
+
+ // try{
+  isFolder=(fs.lstatSync(pathSearched2).isDirectory());
+  isFile=(fs.lstatSync(pathSearched2).isFile());
+ // }catch(e){
+ //    // Handle error
+ //  console.log("error"+e);
+ // }
+
+
+if(isFolder){return 1};
+if(isFile){return 2};
+return 0;
+
+//   fs.lstat(pathSearched2,(err, stats) => {
+//     if (err) {
+//       return console.log(err); //Handle error
+//     }else if(stats.isFile()){
+//  let reviewPath = path.parse(pathSearched2);
+//  console.log(reviewPath + " reviewPath");
+//  if(reviewPath.ext==="md"){return "md"};}
+//
+//  if(stats.isDirectory()){return "directory"}
+//     // console.log(`Is file: ${stats.isFile()}`);
+//     // console.log(`Is directory: ${stats.isDirectory()}`);
+// console.log("hola estoy aquí en validateFileOrDirectory");
+//
+// });
+
+
+}
+
+
+
+
+
 function reviewFolders(directoryPath) {
   // console.log(directoryPath[0] + " primera impresion dentro de la función"); ASÍ NO LO ENTIENDE HAY QUE PASARLO A UNA VARIABLE
   // console.log(commandToAdd1 + " primera impresion commandToAdd1");
-
+console.log(directoryPath);
 let pathSearched=directoryPath[0];
-// console.log(pathSearched+ " pathSearched");
+ // console.log(pathSearched+ " pathSearched");
 
-  fs.lstat(pathSearched, (err, stats) => {
+ let folderOrFile = validateFileOrDirectory(pathSearched);
 
-    if (err) {
-      return console.log(err); //Handle error
-    } else {
-      console.log(`Is file: ${stats.isFile()}`);
-      console.log(`Is directory: ${stats.isDirectory()}`);
+ // console.log(folderOrFile+" FolderOrFile");
 
-      if (stats.isFile()) { console.log("es archivo") } else if (stats.isDirectory()) {
-        console.log("es directorio");
+if(folderOrFile===1){
+ var resultFolders=readContentDirectory(pathSearched,directoryPath)
+ }
+console.log(resultFolders);
 
-        fs.readdir(pathSearched, (err, data) => {
-          if (err) throw err;
-          console.log(data);
-          for (let i = 0; i < data.length; i++) {
-            let urlPrueba = pathSearched + '/' + data[i];
-            // console.log(urlPrueba);
-            console.log(directoryPath);
-            directoryPath.push(urlPrueba);
 
-          }
+  // fs.lstat(pathSearched, (err, stats) => {
+  //
+  //   if (err) {
+  //     return console.log(err); //Handle error
+  //   } else {
+  //     console.log(`Is file: ${stats.isFile()}`);
+  //     console.log(`Is directory: ${stats.isDirectory()}`);
+  //
+  //     if (stats.isFile()) { console.log("es archivo") } else if (stats.isDirectory()) {
+  //       console.log("es directorio");
 
-          // directoryPath.shift();
-          console.log(directoryPath.length);
-          console.log(directoryPath);
+        // fs.readdir(pathSearched, (err, data) => {
+        //   if (err) throw err;
+        //   console.log(data);
+        //   for (let i = 0; i < data.length; i++) {
+        //     let urlPrueba = pathSearched + '/' + data[i];
+        //     // console.log(urlPrueba);
+        //     console.log(directoryPath);
+        //     directoryPath.push(urlPrueba);
+        //
+        //   }
 
-        });
 
-        console.log(directoryPath + " estoy fuera del ciclo readdir");
+    directoryPath.shift();
+          // console.log(directoryPath.length);
+          // console.log(directoryPath);
+          // if (directoryPath.length = 0) { return console.log("proceso terminado") };
+          // return (reviewFolders(directoryPath));
+        // });
+        // console.log(directoryPath + " estoy fuera del ciclo readdir");
+  //     }
+  //     console.log(directoryPath + " estoy fuera del ciclo si es directorio");
+  //   }
+  //   console.log(directoryPath + " estoy fuera del ciclo si no es error entonces is es archivo o directorio");
+  // });
 
-      }
-      console.log(directoryPath + " estoy fuera del ciclo si es directorio");
-    }
-    console.log(directoryPath + " estoy fuera del ciclo si no es error entonces is es archivo o directorio");
-  });
+  console.log(directoryPath+"resultado despues de shift");
   if (directoryPath.length = 0) { return console.log("proceso terminado") };
-  return console.log("ok fin función");
+  newDirectoryPath=directoryPath;
+  console.log(directoryPath.length);
+  console.log(newDirectoryPath+"resultado antes de volver a llamar");
+  console.log(directoryPath[0]+"largo array final");
+  return reviewFolders(newDirectoryPath);
 }
 
 // console.log(directoryPath);
@@ -101,6 +158,31 @@ let pathSearched=directoryPath[0];
 
 reviewFolders(directoryPath);
 
+
+
+function readContentDirectory(pathSearched,directoryPath){
+
+
+  // fs.readdirSync(pathSearched, (err, data) => {
+   let data = fs.readdirSync(pathSearched);
+    // if (err) throw err;
+    // console.log(data);
+    for (let i = 0; i < data.length; i++) {
+      let urlPrueba = pathSearched + '/' + data[i];
+       // console.log(urlPrueba);
+      // console.log(directoryPath);
+      let folderOrFile = validateFileOrDirectory(urlPrueba);
+     // console.log(folderOrFile);
+      if(folderOrFile===1){
+      directoryPath.push(urlPrueba);
+    }
+  }
+  // console.log(directoryPath);
+  return directoryPath;
+// }
+// )
+
+}
 
 
 
