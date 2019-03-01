@@ -16,6 +16,7 @@ const commandToAdd2 = getCommandInPosition(3);
 
 
 let directoryPath = [commandToAdd1];
+var linksFound = [];
 // console.log(directoryPath[0]);
 // let a=1;
 // while(a>0){
@@ -145,6 +146,7 @@ let pathSearched=directoryPath[0];
   // console.log(directoryPath.length);
   // console.log(newDirectoryPath+"resultado antes de volver a llamar");
   // console.log(directoryPath[0]+"largo array final");
+   console.log(linksFound);
   return reviewFolders(directoryPath);
 }
 
@@ -158,7 +160,7 @@ let pathSearched=directoryPath[0];
 
 
 reviewFolders(directoryPath);
-
+console.log(linksFound+" afuera del ciclo");
 
 
 function readContentDirectory(pathSearched,directoryPath){
@@ -185,7 +187,7 @@ function readContentDirectory(pathSearched,directoryPath){
     console.log("si archivo es . md entonces llamar función que lee md y saca links")
 
     console.log(reviewPath.ext);
-
+    console.log(linksFound+" en readContenDirectory");
 
 
     }
@@ -193,7 +195,7 @@ function readContentDirectory(pathSearched,directoryPath){
 
   }
   // console.log(directoryPath);
-  return directoryPath;
+  return directoryPath,linksFound;
 // }
 // )
 
@@ -206,6 +208,10 @@ function readContentDirectory(pathSearched,directoryPath){
 function readFileMd (urlFileMd){
 // PARA LEER UN ARCHIVO
 commandToAdd3 = urlFileMd;
+let pathFileMd = commandToAdd3;
+console.log(urlFileMd+" urlFileMd url que entra para búsqueda");
+// let linksFound2=linksFound;
+console.log(linksFound+" en linksFound");
 fs.readFile(commandToAdd3, (err, data) => {
   if (err) throw err;
   // console.log(data.toString());
@@ -217,12 +223,13 @@ fs.readFile(commandToAdd3, (err, data) => {
   console.log(result.length);
 
 
-  let linksFound = [];
+  // let linksFound = [];
   let link = "";
   let newText = result;
 
   // let path = commandToAdd1 + "/" + commandToAdd3;
-    let path = commandToAdd3;
+  // let pathFileMd = commandToAdd3;
+  console.log(pathFileMd+ " pathFileMd");
 
   let m = -1;
 
@@ -240,19 +247,17 @@ fs.readFile(commandToAdd3, (err, data) => {
     let extensionContent = link.length - o - 4;
     let contentLink = link.substr(o, extensionContent);
 
-    if (m != -1) { linksFound.push(link, contentLink, path); }
+    if (m != -1) { linksFound.push(link, contentLink, pathFileMd); }
 
     newText = newText.substr(n + 3);
   } while (m != -1);
 
-   console.log(linksFound);
-
-
+ console.log(linksFound);
 });
-
-
+return linksFound;
 }
 
+// console.log(linksFound);
 // PARA IDENTIFICAR LINKS VALIDOS
 var fetchUrl = require("fetch").fetchUrl;
 
