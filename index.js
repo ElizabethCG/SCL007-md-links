@@ -171,6 +171,20 @@ function readContentDirectory(pathSearched,directoryPath){
       if(folderOrFile===1){
       directoryPath.push(urlPrueba);
     }
+    reviewPath = path.parse(urlPrueba);
+    // console.log(reviewPath);
+
+    if(folderOrFile===2 && reviewPath.ext==="md"){
+    console.log(reviewPath.ext);
+    console.log("si archivo es . md entonces llamar función que lee md y saca links")
+
+
+
+
+
+    }
+
+
   }
   // console.log(directoryPath);
   return directoryPath;
