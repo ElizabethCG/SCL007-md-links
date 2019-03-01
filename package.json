@@ -1,7 +1,7 @@
 {
   "name": "md-links",
   "version": "0.1.0",
-  "description": "una calculadora aburrida, pero con colores",
+  "description": "Módulo que lee archivo markdown y extrae links",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
