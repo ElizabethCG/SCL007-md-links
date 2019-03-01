@@ -16,25 +16,25 @@ const commandToAdd2 = getCommandInPosition(3);
 
 
 let directoryPath = [commandToAdd1];
-console.log(directoryPath[0]);
+// console.log(directoryPath[0]);
 // let a=1;
 // while(a>0){
-reviewPath = path.parse(commandToAdd1);
-console.log(reviewPath);
-console.log(reviewPath.ext);
-console.log(reviewPath.root);
-console.log(reviewPath.base);
-console.log(reviewPath.name);
-
-console.log(reviewPath.dir);
-
-path.dirname(commandToAdd1);
-console.log(path.dirname(commandToAdd1) + " Nombre directorio ");
+// reviewPath = path.parse(commandToAdd1);
+// console.log(reviewPath);
+// console.log(reviewPath.ext);
+// console.log(reviewPath.root);
+// console.log(reviewPath.base);
+// console.log(reviewPath.name);
+//
+// console.log(reviewPath.dir);
+//
+// path.dirname(commandToAdd1);
+// console.log(path.dirname(commandToAdd1) + " Nombre directorio ");
 
 // var directoryPath=[commandToAdd1];
 
-console.log(directoryPath[0] + " revisando si directory path contiene algo");
-console.log(`${directoryPath[0]} hola`);
+// console.log(directoryPath[0] + " revisando si directory path contiene algo");
+// console.log(`${directoryPath[0]} hola`);
 
 
 ///////////////////////
@@ -120,7 +120,7 @@ console.log(resultFolders);
         //   }
 
 
-    directoryPath.shift();
+     directoryPath.shift();
           // console.log(directoryPath.length);
           // console.log(directoryPath);
           // if (directoryPath.length = 0) { return console.log("proceso terminado") };
@@ -132,14 +132,14 @@ console.log(resultFolders);
   //   }
   //   console.log(directoryPath + " estoy fuera del ciclo si no es error entonces is es archivo o directorio");
   // });
-
+console.log(directoryPath.length);
   console.log(directoryPath+"resultado despues de shift");
-  if (directoryPath.length = 0) { return console.log("proceso terminado") };
-  newDirectoryPath=directoryPath;
+  if (directoryPath.length < 1) { return console.log("proceso terminado") };
+  // newDirectoryPath=directoryPath;
   console.log(directoryPath.length);
-  console.log(newDirectoryPath+"resultado antes de volver a llamar");
+  // console.log(newDirectoryPath+"resultado antes de volver a llamar");
   console.log(directoryPath[0]+"largo array final");
-  return reviewFolders(newDirectoryPath);
+  return reviewFolders(directoryPath);
 }
 
 // console.log(directoryPath);
@@ -148,11 +148,6 @@ console.log(resultFolders);
 
 // a=0;
 // }
-
-
-
-
-
 
 
 
