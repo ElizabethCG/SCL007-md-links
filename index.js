@@ -83,18 +83,21 @@ return 0;
 function reviewFolders(directoryPath) {
   // console.log(directoryPath[0] + " primera impresion dentro de la función"); ASÍ NO LO ENTIENDE HAY QUE PASARLO A UNA VARIABLE
   // console.log(commandToAdd1 + " primera impresion commandToAdd1");
-console.log(directoryPath);
+// console.log(directoryPath);
 let pathSearched=directoryPath[0];
  // console.log(pathSearched+ " pathSearched");
 
  let folderOrFile = validateFileOrDirectory(pathSearched);
 
  // console.log(folderOrFile+" FolderOrFile");
-
-if(folderOrFile===1){
+ let reviewPath = path.parse(pathSearched);
+ if(folderOrFile===2 && reviewPath.ext===".md"){
+  console.log("llamar función que busca links en archivo md.")
+}else if(folderOrFile===1){
  var resultFolders=readContentDirectory(pathSearched,directoryPath)
  }
-console.log(resultFolders);
+ // Esta es la variable nueva...PREGUNTAR COMO LA TOMO DESDE FUERA DEL IF YA QUE ME APARECE UNDEFINED
+ console.log(resultFolders);
 
 
   // fs.lstat(pathSearched, (err, stats) => {
@@ -132,13 +135,13 @@ console.log(resultFolders);
   //   }
   //   console.log(directoryPath + " estoy fuera del ciclo si no es error entonces is es archivo o directorio");
   // });
-console.log(directoryPath.length);
+// console.log(directoryPath.length);
   console.log(directoryPath+"resultado despues de shift");
   if (directoryPath.length < 1) { return console.log("proceso terminado") };
   // newDirectoryPath=directoryPath;
-  console.log(directoryPath.length);
+  // console.log(directoryPath.length);
   // console.log(newDirectoryPath+"resultado antes de volver a llamar");
-  console.log(directoryPath[0]+"largo array final");
+  // console.log(directoryPath[0]+"largo array final");
   return reviewFolders(directoryPath);
 }
 
@@ -173,12 +176,11 @@ function readContentDirectory(pathSearched,directoryPath){
     }
     reviewPath = path.parse(urlPrueba);
     // console.log(reviewPath);
-
-    if(folderOrFile===2 && reviewPath.ext==="md"){
-    console.log(reviewPath.ext);
+// && reviewPath.ext===".md"
+    if(folderOrFile===2 && reviewPath.ext===".md"){
     console.log("si archivo es . md entonces llamar función que lee md y saca links")
 
-
+    console.log(reviewPath.ext);
 
 
 
@@ -238,6 +240,9 @@ fs.readFile(commandToAdd3, (err, data) => {
 
 
 });
+
+
+
 
 // PARA IDENTIFICAR LINKS VALIDOS
 var fetchUrl = require("fetch").fetchUrl;
