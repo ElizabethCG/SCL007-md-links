@@ -15,65 +15,39 @@ const commandToAdd1 = getCommandInPosition(2);
 const commandToAdd2 = getCommandInPosition(3);
 
 
+if (require.main === module) {
+  mdLinks(commandToAdd1,commandToAdd2);   // this module was run directly from the command line as in node xxx.js
+}
+
+     // this module was not run directly from the command line and probably loaded by something else
+
+
+
+
+
+function mdLinks(urlpath, evalOption){
+return new Promise((resolve, reject) => {
+
 let directoryPath = [commandToAdd1];
 var linksFound = [];
-// console.log(directoryPath[0]);
-// let a=1;
-// while(a>0){
-// reviewPath = path.parse(commandToAdd1);
-// console.log(reviewPath);
-// console.log(reviewPath.ext);
-// console.log(reviewPath.root);
-// console.log(reviewPath.base);
-// console.log(reviewPath.name);
-//
-// console.log(reviewPath.dir);
-//
-// path.dirname(commandToAdd1);
-// console.log(path.dirname(commandToAdd1) + " Nombre directorio ");
+var options=evalOption;
 
-// var directoryPath=[commandToAdd1];
-
-// console.log(directoryPath[0] + " revisando si directory path contiene algo");
-// console.log(`${directoryPath[0]} hola`);
+reviewFolders(directoryPath);
+resolve(console.log(linksFound + " resultado esperado"));
 
 
 ///////////////////////
 
 
-function validateFileOrDirectory(pathSearched){
-  // console.log (pathSearched+" en validateFileOrDirectory");
- pathSearched2=pathSearched;
- // console.log(pathSearched2+" revisando pathsearched 2");
+function validateFileOrDirectory(pathSearched) {
 
- // try{
-  isFolder=(fs.lstatSync(pathSearched2).isDirectory());
-  isFile=(fs.lstatSync(pathSearched2).isFile());
- // }catch(e){
- //    // Handle error
- //  console.log("error"+e);
- // }
+  pathSearched2 = pathSearched;
+  isFolder = (fs.lstatSync(pathSearched2).isDirectory());
+  isFile = (fs.lstatSync(pathSearched2).isFile());
 
-
-if(isFolder){return 1};
-if(isFile){return 2};
-return 0;
-
-//   fs.lstat(pathSearched2,(err, stats) => {
-//     if (err) {
-//       return console.log(err); //Handle error
-//     }else if(stats.isFile()){
-//  let reviewPath = path.parse(pathSearched2);
-//  console.log(reviewPath + " reviewPath");
-//  if(reviewPath.ext==="md"){return "md"};}
-//
-//  if(stats.isDirectory()){return "directory"}
-//     // console.log(`Is file: ${stats.isFile()}`);
-//     // console.log(`Is directory: ${stats.isDirectory()}`);
-// console.log("hola estoy aquí en validateFileOrDirectory");
-//
-// });
-
+  if (isFolder) { return 1 };
+  if (isFile) { return 2 };
+  return 0;
 
 }
 
@@ -82,154 +56,67 @@ return 0;
 
 
 function reviewFolders(directoryPath) {
-  // console.log(directoryPath[0] + " primera impresion dentro de la función"); ASÍ NO LO ENTIENDE HAY QUE PASARLO A UNA VARIABLE
-  // console.log(commandToAdd1 + " primera impresion commandToAdd1");
-// console.log(directoryPath);
-let pathSearched=directoryPath[0];
- // console.log(pathSearched+ " pathSearched");
-
- let folderOrFile = validateFileOrDirectory(pathSearched);
-
- // console.log(folderOrFile+" FolderOrFile");
- let reviewPath = path.parse(pathSearched);
- if(folderOrFile===2 && reviewPath.ext===".md"){
-
-  let readingResult= readFileMd (pathSearched);
-
-  console.log("llamar función que busca links en archivo md.")
-}else if(folderOrFile===1){
- var resultFolders=readContentDirectory(pathSearched,directoryPath)
- }
- // Esta es la variable nueva...PREGUNTAR COMO LA TOMO DESDE FUERA DEL IF YA QUE ME APARECE UNDEFINED
- console.log(resultFolders);
-
-
-  // fs.lstat(pathSearched, (err, stats) => {
-  //
-  //   if (err) {
-  //     return console.log(err); //Handle error
-  //   } else {
-  //     console.log(`Is file: ${stats.isFile()}`);
-  //     console.log(`Is directory: ${stats.isDirectory()}`);
-  //
-  //     if (stats.isFile()) { console.log("es archivo") } else if (stats.isDirectory()) {
-  //       console.log("es directorio");
-
-        // fs.readdir(pathSearched, (err, data) => {
-        //   if (err) throw err;
-        //   console.log(data);
-        //   for (let i = 0; i < data.length; i++) {
-        //     let urlPrueba = pathSearched + '/' + data[i];
-        //     // console.log(urlPrueba);
-        //     console.log(directoryPath);
-        //     directoryPath.push(urlPrueba);
-        //
-        //   }
-
-
-     directoryPath.shift();
-          // console.log(directoryPath.length);
-          // console.log(directoryPath);
-          // if (directoryPath.length = 0) { return console.log("proceso terminado") };
-          // return (reviewFolders(directoryPath));
-        // });
-        // console.log(directoryPath + " estoy fuera del ciclo readdir");
-  //     }
-  //     console.log(directoryPath + " estoy fuera del ciclo si es directorio");
-  //   }
-  //   console.log(directoryPath + " estoy fuera del ciclo si no es error entonces is es archivo o directorio");
-  // });
-// console.log(directoryPath.length);
-  console.log(directoryPath+"resultado despues de shift");
+  let pathSearched = directoryPath[0];
+  let folderOrFile = validateFileOrDirectory(pathSearched);
+  let reviewPath = path.parse(pathSearched);
+  if (folderOrFile === 2 && reviewPath.ext === ".md") {
+    let readingResult = readFileMd(pathSearched);
+    // console.log("llamar función que busca links en archivo md.")
+  } else if (folderOrFile === 1) {
+    var resultFolders = readContentDirectory(pathSearched, directoryPath)
+  }
+  // console.log(resultFolders);
+  directoryPath.shift();
+  // console.log(directoryPath + "resultado despues de shift");
   if (directoryPath.length < 1) { return console.log("proceso terminado") };
-  // newDirectoryPath=directoryPath;
-  // console.log(directoryPath.length);
-  // console.log(newDirectoryPath+"resultado antes de volver a llamar");
-  // console.log(directoryPath[0]+"largo array final");
-   console.log(linksFound);
+    // console.log(linksFound);
   return reviewFolders(directoryPath);
 }
 
-// console.log(directoryPath);
+
+// reviewFolders(directoryPath);
+// console.log(linksFound + " afuera del ciclo");
 
 
-
-// a=0;
-// }
-
-
-
-reviewFolders(directoryPath);
-console.log(linksFound+" afuera del ciclo");
-
-
-function readContentDirectory(pathSearched,directoryPath){
-
-
-  // fs.readdirSync(pathSearched, (err, data) => {
-   let data = fs.readdirSync(pathSearched);
-    // if (err) throw err;
-    // console.log(data);
-    for (let i = 0; i < data.length; i++) {
-      let urlPrueba = pathSearched + '/' + data[i];
-       // console.log(urlPrueba);
-      // console.log(directoryPath);
-      let folderOrFile = validateFileOrDirectory(urlPrueba);
-     // console.log(folderOrFile);
-      if(folderOrFile===1){
+function readContentDirectory(pathSearched, directoryPath) {
+  let data = fs.readdirSync(pathSearched);
+  for (let i = 0; i < data.length; i++) {
+    let urlPrueba = pathSearched + '/' + data[i];
+    let folderOrFile = validateFileOrDirectory(urlPrueba);
+    if (folderOrFile === 1) {
       directoryPath.push(urlPrueba);
     }
     reviewPath = path.parse(urlPrueba);
-    // console.log(reviewPath);
-// && reviewPath.ext===".md"
-    if(folderOrFile===2 && reviewPath.ext===".md"){
-    let readingResult= readFileMd (urlPrueba);
-    console.log("si archivo es . md entonces llamar función que lee md y saca links")
-
-    console.log(reviewPath.ext);
-    console.log(linksFound+" en readContenDirectory");
-
-
+    if (folderOrFile === 2 && reviewPath.ext === ".md") {
+      let readingResult = readFileMd(urlPrueba);
+      // console.log("si archivo es . md entonces llamar función que lee md y saca links")
+      //
+      // console.log(reviewPath.ext);
+      // console.log(linksFound + " en readContenDirectory");
     }
-
-
   }
-  // console.log(directoryPath);
-  return directoryPath,linksFound;
-// }
-// )
-
+  return directoryPath, linksFound;
 }
 
 
 
-// array viene desde fuera aquí sólo lo llena
 
-function readFileMd (urlFileMd){
-// PARA LEER UN ARCHIVO
-commandToAdd3 = urlFileMd;
-let pathFileMd = commandToAdd3;
-console.log(urlFileMd+" urlFileMd url que entra para búsqueda");
-// let linksFound2=linksFound;
-console.log(linksFound+" en linksFound");
-fs.readFile(commandToAdd3, (err, data) => {
-  if (err) throw err;
-  // console.log(data.toString());
-
-  var result = md.render(data.toString());
-  // para imprimir el contenido del archivo
-  // console.log(result[46]);
-
-  console.log(result.length);
+// PARA LEER ARCHIVO Y ACUMULAR LINKS EN UN ARRAY
+function readFileMd(urlFileMd) {
+  commandToAdd3 = urlFileMd;
+  let pathFileMd = commandToAdd3;
+  // console.log(urlFileMd + " urlFileMd url que entra para búsqueda");
+  // console.log(linksFound + " en linksFound");
+  var result1 = fs.readFileSync(commandToAdd3);
+  var result = md.render(result1.toString());
 
 
-  // let linksFound = [];
+  // console.log(result.length);
+
   let link = "";
   let newText = result;
 
-  // let path = commandToAdd1 + "/" + commandToAdd3;
-  // let pathFileMd = commandToAdd3;
-  console.log(pathFileMd+ " pathFileMd");
+  // console.log(pathFileMd + " pathFileMd");
 
   let m = -1;
 
@@ -238,83 +125,43 @@ fs.readFile(commandToAdd3, (err, data) => {
     m = newText.indexOf("<a href=");
     let n = newText.indexOf("a>");
     let extensionString = (n + 2) - m;
-
     link = newText.substr(m, extensionString);
-
-
     let o = link.indexOf(">") + 1;
-
     let extensionContent = link.length - o - 4;
     let contentLink = link.substr(o, extensionContent);
-
     if (m != -1) { linksFound.push(link, contentLink, pathFileMd); }
-
     newText = newText.substr(n + 3);
   } while (m != -1);
-
- console.log(linksFound);
-});
-return linksFound;
+  return linksFound;
 }
+});// FIN PROMESA
+}
+// FIN MDLINKS
 
-// console.log(linksFound);
-// PARA IDENTIFICAR LINKS VALIDOS
+
+
+module.exports= mdLinks;
+
+
+////////////////////////////////////////
 var fetchUrl = require("fetch").fetchUrl;
 
 // source file is iso-8859-15 but it is converted to utf-8 automatically
 fetchUrl("http://es.wikipedia.org/wiki/Markdown", function (error, meta, body) {
   if (meta.status === 200) {
     console.log("vinculo correcto");
-    console.log(meta.status);
-    console.log(meta.responseHeaders);
-    console.log(body);
+    // console.log(meta.status);
+    // console.log(meta.responseHeaders);
+    // console.log(body);
 
   } else { console.log("vinculo incorrecto") }
-  // console.log(meta.status);
-  // console.log(meta.responseHeaders);
-  // console.log(body);
+
 });
 
 // SOLO RECIBE HTTPS
 https.get('https://es.wikipedia.org/wiki/Markdown', (res) => {
   const { statusCode } = res;
-  console.log(statusCode);
+  // console.log(statusCode);
   const contentType = res.headers['content-type'];
-  console.log("estoy aqui " + contentType);
+  // console.log("estoy aqui " + contentType);
 });
-
-
-
-
-//SOLO RECORDATORIOS DE FORMATO Y FUNCIONES
-
-// array.indexOf(searchElement[, fromIndex])
-// cadena.substr(1))
-// Formato
- //fs.readdir(path[, options], callback)
-
-	// });
-
-// console.log(data[3].substring(data[3].length-2)); TOMA LA EXTENSIÓN
-// console.log(path.extname(data[3]);
-// console.log(data[3].substring(data[3].length-2)); TOMA LA EXTENSIÓN
-// console.log(path.extname(data[3]);
-
-// fs.lstat('C:/Users/Elizabeth/Documents/javascript/markdown/SCL007-md-links/.gitignore', (err, stats) => {
-//
-//     if(err){
-//         return console.log(err); //Handle error
-// }else{
-//     console.log(`Is file: ${stats.isFile()}`);
-//     console.log(`Is directory: ${stats.isDirectory()}`);
-//     // console.log(`Is symbolic link: ${stats.isSymbolicLink()}`);
-//     // console.log(`Is FIFO: ${stats.isFIFO()}`);
-//     // console.log(`Is socket: ${stats.isSocket()}`);
-//     // console.log(`Is character device: ${stats.isCharacterDevice()}`);
-//     // console.log(`Is block device: ${stats.isBlockDevice()}`);
-//
-//     if(stats.isFile()){console.log("es archivo")}
-// }
-//
-//
-// });
