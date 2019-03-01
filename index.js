@@ -92,6 +92,9 @@ let pathSearched=directoryPath[0];
  // console.log(folderOrFile+" FolderOrFile");
  let reviewPath = path.parse(pathSearched);
  if(folderOrFile===2 && reviewPath.ext===".md"){
+
+  let readingResult= readFileMd (pathSearched);
+
   console.log("llamar función que busca links en archivo md.")
 }else if(folderOrFile===1){
  var resultFolders=readContentDirectory(pathSearched,directoryPath)
@@ -178,6 +181,7 @@ function readContentDirectory(pathSearched,directoryPath){
     // console.log(reviewPath);
 // && reviewPath.ext===".md"
     if(folderOrFile===2 && reviewPath.ext===".md"){
+    let readingResult= readFileMd (urlPrueba);
     console.log("si archivo es . md entonces llamar función que lee md y saca links")
 
     console.log(reviewPath.ext);
@@ -197,9 +201,11 @@ function readContentDirectory(pathSearched,directoryPath){
 
 
 
+// array viene desde fuera aquí sólo lo llena
 
+function readFileMd (urlFileMd){
 // PARA LEER UN ARCHIVO
-commandToAdd3 = '\README.md';
+commandToAdd3 = urlFileMd;
 fs.readFile(commandToAdd3, (err, data) => {
   if (err) throw err;
   // console.log(data.toString());
@@ -214,7 +220,10 @@ fs.readFile(commandToAdd3, (err, data) => {
   let linksFound = [];
   let link = "";
   let newText = result;
-  let path = commandToAdd1 + "/" + commandToAdd3;
+
+  // let path = commandToAdd1 + "/" + commandToAdd3;
+    let path = commandToAdd3;
+
   let m = -1;
 
   do {
@@ -236,13 +245,13 @@ fs.readFile(commandToAdd3, (err, data) => {
     newText = newText.substr(n + 3);
   } while (m != -1);
 
-  // console.log(linksFound);
+   console.log(linksFound);
 
 
 });
 
 
-
+}
 
 // PARA IDENTIFICAR LINKS VALIDOS
 var fetchUrl = require("fetch").fetchUrl;
