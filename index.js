@@ -61,7 +61,7 @@ function mdLinks(filePath, evalOption) {
     }
 
 
-    //FUNCIÓN QUE AGREGA EL CONTENIDO DE LA CARPETA DETECTADA AL ARRAY "directoryPath[]" 
+    //FUNCIÓN QUE AGREGA EL CONTENIDO DE LA CARPETA DETECTADA AL ARRAY "directoryPath[]"
     function readDirectoryContent(pathSearched) {
       let directoryContent = fs.readdirSync(pathSearched);
       for (let i = 0; i < directoryContent.length; i++) {
@@ -84,15 +84,16 @@ function mdLinks(filePath, evalOption) {
       let m = -1;
 
       do {
-        newText.indexOf("<a href=");
-        m = newText.indexOf("<a href=");
+        // newText.indexOf("<a href=");
+        stringSearched=(`<a href="`);
+        m = parseInt(newText.indexOf(stringSearched));
         let n = newText.indexOf("a>");
         let extensionString = (n + 2) - m;
         link = newText.substr(m, extensionString);
         let o = link.indexOf(">") + 1;
         let extensionContent = link.length - o - 4;
         let contentLink = link.substr(o, extensionContent);
-        if (m != -1) { linksFound.push(link, contentLink, pathFileMd); }
+        if (m != -1) { linksFound.push({"href":link, "text":contentLink, "file": pathFileMd}); }
         newText = newText.substr(n + 3);
       } while (m != -1);
       return;
@@ -104,25 +105,3 @@ function mdLinks(filePath, evalOption) {
 
 
 module.exports = mdLinks;
-
-
-
-
-//PARA VALIDAR QUE LINK ESTÁ OPERATIVO/// AUN NO ESTÁ IMPLEMENTADO EN FUNCIÓN MDLINKS
-var fetchUrl = require("fetch").fetchUrl;
-
-// source file is iso-8859-15 but it is converted to utf-8 automatically
-fetchUrl("http://es.wikipedia.org/wiki/Markdown", function (error, meta, body) {
-  if (meta.status === 200) {
-    // console.log("vinculo correcto");
-  } else { console.log("vinculo incorrecto") }
-
-});
-
-// SOLO RECIBE HTTPS
-https.get('https://es.wikipedia.org/wiki/Markdown', (res) => {
-  const { statusCode } = res;
-  // console.log(statusCode);
-  const contentType = res.headers['content-type'];
-  // console.log("estoy aqui " + contentType);
-});
