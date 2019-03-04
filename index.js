@@ -11,149 +11,110 @@ const getCommandInPosition = (pos) => {
   return (process.argv[pos]);
 }
 
-const commandToAdd1 = getCommandInPosition(2);
-const commandToAdd2 = getCommandInPosition(3);
+const pathToSearch = getCommandInPosition(2);
+const optionsToEval = getCommandInPosition(3);
 
 
 if (require.main === module) {
-  mdLinks(commandToAdd1,commandToAdd2);   // this module was run directly from the command line as in node xxx.js
-}
-
-     // this module was not run directly from the command line and probably loaded by something else
-
-
-
-
-
-function mdLinks(urlpath, evalOption){
-return new Promise((resolve, reject) => {
-
-let directoryPath = [commandToAdd1];
-var linksFound = [];
-var options=evalOption;
-
-reviewFolders(directoryPath);
-resolve(console.log(linksFound + " resultado esperado"));
-
-
-///////////////////////
-
-
-function validateFileOrDirectory(pathSearched) {
-
-  pathSearched2 = pathSearched;
-  isFolder = (fs.lstatSync(pathSearched2).isDirectory());
-  isFile = (fs.lstatSync(pathSearched2).isFile());
-
-  if (isFolder) { return 1 };
-  if (isFile) { return 2 };
-  return 0;
-
+  mdLinks(pathToSearch, optionsToEval);
 }
 
 
 
+function mdLinks(filePath, evalOption) {
+  return new Promise((resolve, reject) => {
+
+    let directoryPath = [filePath];
+    let linksFound = [];
+    let options = evalOption;
+
+    reviewFolders();
+    resolve(console.log(linksFound));
 
 
-function reviewFolders(directoryPath) {
-  let pathSearched = directoryPath[0];
-  let folderOrFile = validateFileOrDirectory(pathSearched);
-  let reviewPath = path.parse(pathSearched);
-  if (folderOrFile === 2 && reviewPath.ext === ".md") {
-    let readingResult = readFileMd(pathSearched);
-    // console.log("llamar función que busca links en archivo md.")
-  } else if (folderOrFile === 1) {
-    var resultFolders = readContentDirectory(pathSearched, directoryPath)
-  }
-  // console.log(resultFolders);
-  directoryPath.shift();
-  // console.log(directoryPath + "resultado despues de shift");
-  if (directoryPath.length < 1) { return console.log("proceso terminado") };
-    // console.log(linksFound);
-  return reviewFolders(directoryPath);
-}
 
-
-// reviewFolders(directoryPath);
-// console.log(linksFound + " afuera del ciclo");
-
-
-function readContentDirectory(pathSearched, directoryPath) {
-  let data = fs.readdirSync(pathSearched);
-  for (let i = 0; i < data.length; i++) {
-    let urlPrueba = pathSearched + '/' + data[i];
-    let folderOrFile = validateFileOrDirectory(urlPrueba);
-    if (folderOrFile === 1) {
-      directoryPath.push(urlPrueba);
+    //FUNCIÓN PRINCIPAL DENTRO DE mdLinks()
+    function reviewFolders() {
+      let pathSearched = directoryPath[0];
+      let isFolderOrFile = validateIsFileOrDirectory(pathSearched);
+      let reviewPath = path.parse(pathSearched);
+      //isFolderOrFile===1; es carpeta
+      //isFolderOrFile===2; es archivo
+      if (isFolderOrFile === 2 && reviewPath.ext === ".md") {
+        let readingResult = readFileMd(pathSearched);
+      } else if (isFolderOrFile === 1) {
+        var resultFolders = readDirectoryContent(pathSearched)
+      }
+      directoryPath.shift(); //Elimina el 1° registro del array porque ya fue analizado. El nuevo contenido hallado se agregó al final del array para su revisión.
+      if (directoryPath.length < 1) { return }; // Si la extensión del array es cero, significa que ya se analizó todo y no quedan más archivos ni carpetas por verificar.
+      return reviewFolders(); // Si la ejecución llega a esta línea es porque aún quedan archivos y/o carpetas que revisar. La función se invoca a sí misma para repetir el ciclo de revisión.
     }
-    reviewPath = path.parse(urlPrueba);
-    if (folderOrFile === 2 && reviewPath.ext === ".md") {
-      let readingResult = readFileMd(urlPrueba);
-      // console.log("si archivo es . md entonces llamar función que lee md y saca links")
-      //
-      // console.log(reviewPath.ext);
-      // console.log(linksFound + " en readContenDirectory");
+
+
+    //FUNCIÓN QUE EVALUA SI EL PATH ENTREGADO ES UNA CARPETA O UN ARCHIVO
+    function validateIsFileOrDirectory(pathSearched) {
+      isFolder = (fs.lstatSync(pathSearched).isDirectory());
+      isFile = (fs.lstatSync(pathSearched).isFile());
+      if (isFolder) { return 1 };
+      if (isFile) { return 2 };
+      return 0;
     }
-  }
-  return directoryPath, linksFound;
-}
+
+
+    //FUNCIÓN QUE AGREGA EL CONTENIDO DE LA CARPETA DETECTADA AL ARRAY "directoryPath[]" 
+    function readDirectoryContent(pathSearched) {
+      let directoryContent = fs.readdirSync(pathSearched);
+      for (let i = 0; i < directoryContent.length; i++) {
+        let directoryContentPath = pathSearched + '/' + directoryContent[i];
+        directoryPath.push(directoryContentPath);
+      }
+      return;
+    }
 
 
 
 
-// PARA LEER ARCHIVO Y ACUMULAR LINKS EN UN ARRAY
-function readFileMd(urlFileMd) {
-  commandToAdd3 = urlFileMd;
-  let pathFileMd = commandToAdd3;
-  // console.log(urlFileMd + " urlFileMd url que entra para búsqueda");
-  // console.log(linksFound + " en linksFound");
-  var result1 = fs.readFileSync(commandToAdd3);
-  var result = md.render(result1.toString());
+    // FUNCION QUE LEE EL CONTENIDO DEL ARCHIVO .MD Y ACUMULA LINKS HALLADOS EN ARRAY "linksFound[]"
+    function readFileMd(pathFileMdSearched) {
+      let pathFileMd = pathFileMdSearched;
+      let result1 = fs.readFileSync(pathFileMd);
+      let result = md.render(result1.toString());
+      let link = "";
+      let newText = result;
+      let m = -1;
+
+      do {
+        newText.indexOf("<a href=");
+        m = newText.indexOf("<a href=");
+        let n = newText.indexOf("a>");
+        let extensionString = (n + 2) - m;
+        link = newText.substr(m, extensionString);
+        let o = link.indexOf(">") + 1;
+        let extensionContent = link.length - o - 4;
+        let contentLink = link.substr(o, extensionContent);
+        if (m != -1) { linksFound.push(link, contentLink, pathFileMd); }
+        newText = newText.substr(n + 3);
+      } while (m != -1);
+      return;
+    }
 
 
-  // console.log(result.length);
+  });// FIN PROMESA
+}  // FIN MDLINKS
 
-  let link = "";
-  let newText = result;
 
-  // console.log(pathFileMd + " pathFileMd");
-
-  let m = -1;
-
-  do {
-    newText.indexOf("<a href=");
-    m = newText.indexOf("<a href=");
-    let n = newText.indexOf("a>");
-    let extensionString = (n + 2) - m;
-    link = newText.substr(m, extensionString);
-    let o = link.indexOf(">") + 1;
-    let extensionContent = link.length - o - 4;
-    let contentLink = link.substr(o, extensionContent);
-    if (m != -1) { linksFound.push(link, contentLink, pathFileMd); }
-    newText = newText.substr(n + 3);
-  } while (m != -1);
-  return linksFound;
-}
-});// FIN PROMESA
-}
-// FIN MDLINKS
+module.exports = mdLinks;
 
 
 
-module.exports= mdLinks;
 
-
-////////////////////////////////////////
+//PARA VALIDAR QUE LINK ESTÁ OPERATIVO/// AUN NO ESTÁ IMPLEMENTADO EN FUNCIÓN MDLINKS
 var fetchUrl = require("fetch").fetchUrl;
 
 // source file is iso-8859-15 but it is converted to utf-8 automatically
 fetchUrl("http://es.wikipedia.org/wiki/Markdown", function (error, meta, body) {
   if (meta.status === 200) {
-    console.log("vinculo correcto");
-    // console.log(meta.status);
-    // console.log(meta.responseHeaders);
-    // console.log(body);
-
+    // console.log("vinculo correcto");
   } else { console.log("vinculo incorrecto") }
 
 });
